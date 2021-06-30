@@ -1,5 +1,6 @@
 <script>
 	import pym from "pym.js";
+	import html2canvas from "html2canvas";
 	import { items, urls, types } from "./config";
 	import { getData } from "./utils";
 	import Select from "./Select.svelte";
@@ -11,6 +12,8 @@
 
 	let options = Object.keys(items);
 	let places;
+	let embed = false;
+
 	let selected = ["population", "agemed", "age10yr"];
 	let code = "E07000087";
 	let selector = false;
@@ -35,10 +38,22 @@
 	}
 
 	function makePym() {
-		pymParent = new pym.Parent("profile", url, { name: "profile" });
+		pymParent = new pym.Parent("profile", url, { name: "profile", id: "iframe" });
 		pymReady = true;
 	}
 
+	function makePNG() {
+		let iframe = document.getElementById('iframe');
+		let body = iframe.contentWindow.document.body;
+		console.log(body);
+		
+		html2canvas(body).then(canvas => {
+			let a = document.createElement('a');
+    	a.href = canvas.toDataURL();
+    	a.download = places.find(d => d.code == code).name + '.png';
+    	a.click();
+		});
+	}
 	getData(urls.places).then((res) => {
 		res.forEach((d) => {
 			d.typepl = types[d.type].pl;
@@ -47,9 +62,7 @@
 		places = res.sort((a, b) => a.name.localeCompare(b.name));
 	});
 
-	$: url = `${urls.base}${code ? code : ""}/${selector ? "select" : ""}/${
-		change ? "change" : ""
-	}/${selected.join(",")}`;
+	$: url = `${urls.base}${code ? code : ""}/${selector ? "select" : ""}/${change ? "change" : ""}/${selected.join(",")}`;
 
 	$: !pymReady && pymDiv && url && makePym();
 	$: pymReady && url && window.open(url, "profile");
@@ -129,12 +142,15 @@
 
 <section>
 	<div class="col-wide">
-		<h3>Embed code</h3>
+		<button class="btn" class:btn-active={!embed} on:click={() => embed = !embed}>{embed ? 'Hide' : 'Show'} embed code</button>
+		<button class="btn btn-active" on:click={makePNG}>Download PNG</button>
+		{#if embed}
 		<div id="code">
 			<code>
 				{`<div id="profile"></div><script src="http://cdn.ons.gov.uk/vendor/pym/1.3.2/pym.min.js"></script><script>var pymParent = new pym.Parent("profile", "${url}", {name: "profile"});</script>`}
 			</code>
 		</div>
+		{/if}
 	</div>
 </section>
 
@@ -174,6 +190,8 @@
 		border: 2px solid grey;
 		border-radius: 3px;
 		padding: 5px;
+		padding-top: 2px;
+		margin-top: 5px;
 	}
 	#selected {
 		padding-bottom: 0;
