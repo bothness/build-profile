@@ -6,29 +6,35 @@ export const urls = {
 
 export const items = {
 	population: {
-		label: 'Population',
-		options: {}
+		label: 'Population'
 	},
 	density: {
-		label: 'Density',
-		options: {}
+		label: 'Density'
+	},
+	sex: {
+		label: 'Sex'
+	},
+	health: {
+		label: 'General health'
+	},
+	ethnicity: {
+		label: 'Ethnicity'
 	},
 	agemed: {
-		label: 'Median age',
-		options: {}
+		label: 'Median age'
 	},
 	age10yr: {
-		label: 'Age profile',
-		options: {}
+		label: 'Age profile'
 	},
 	economic:
 	{
-		label: 'Economic activity',
-		options: {}
+		label: 'Economic activity'
 	},
 	travel: {
-		label: 'Travel to work',
-		options: {}
+		label: 'Travel to work'
+	},
+	tenure: {
+		label: 'Housing tenure'
 	}
 };
 

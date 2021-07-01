@@ -1,6 +1,5 @@
 <script>
 	import pym from "pym.js";
-	import html2canvas from "html2canvas";
 	import { items, urls, types } from "./config";
 	import { getData } from "./utils";
 	import Select from "./Select.svelte";
@@ -43,17 +42,9 @@
 	}
 
 	function makePNG() {
-		let iframe = document.getElementById('iframe');
-		let body = iframe.contentWindow.document.body;
-		console.log(body);
-		
-		html2canvas(body).then(canvas => {
-			let a = document.createElement('a');
-    	a.href = canvas.toDataURL();
-    	a.download = places.find(d => d.code == code).name + '.png';
-    	a.click();
-		});
+		pymParent.sendMessage('makePNG', null);
 	}
+
 	getData(urls.places).then((res) => {
 		res.forEach((d) => {
 			d.typepl = types[d.type].pl;
@@ -155,10 +146,6 @@
 </section>
 
 <style>
-	@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap");
-	:global(body) {
-		font-family: "Open Sans", sans-serif;
-	}
 	h3 {
 		margin-top: 0;
 		margin-bottom: 5px;
@@ -190,11 +177,13 @@
 		border: 2px solid grey;
 		border-radius: 3px;
 		padding: 5px;
-		padding-top: 2px;
 		margin-top: 5px;
 	}
 	#selected {
 		padding-bottom: 0;
+	}
+	#code {
+		padding-top: 2px;
 	}
 	.btn-group {
 		display: flex;
